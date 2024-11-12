@@ -1,0 +1,274 @@
+---
+author: "Alfredo Aro Terleira & Romina Loayza Gaitan"
+---
+
+# Limpieza de data para el Benchmarking
+
+## Capítulo 100: Infraestructura (Censo Nacional de Comisarias (CENACOM) 2017 - [Instituto Nacional de Estadística e Informática - INEI])
+
+link: https://www.datosabiertos.gob.pe/dataset/censo-nacional-de-comisarias-cenacom-2017-instituto-nacional-de-estad%C3%ADstica-e-inform%C3%A1tica
+
+### Variables: "Total de efectivos asignados en la comisaría" y "Número total de efectivos policiales que realizan patrullaje motorizado (auto, camioneta o moto)" 
+
+```{r}
+#install.packages("rio")
+library(rio)
+
+infraestructura = import("Cap_100_Infraestructura_2017.csv")
+```
+
+```{r}
+str(infraestructura)
+```
+
+Nos quedamos solo con lo que necesitamos
+
+```{r}
+infraestructura <- infraestructura[, c("NOMBREDI", "INF110_TOT_OFI_H", "INF110_TOT_OFI_M", "INF110_TOT_OFISV_H", "INF110_TOT_OFISV_M", "INF110_TOT_SOF_H", "INF110_TOT_SOF_M", "INF110_TOT_SOFSV_H", "INF110_TOT_SOFSV_M", "INF112_MOT_OFI_H", "INF112_MOT_OFI_M", "INF112_MOT_OFISV_H", "INF112_MOT_OFISV_M", "INF112_MOT_SOF_H", "INF112_MOT_SOF_M", "INF112_MOT_SOFSV_H", "INF112_MOT_SOFSV_M")]
+```
+
+Ahora limpiamos, ya que solo necesitamos comisarías de Lima Metropolitana y Callao
+
+```{r}
+infraestructura$NOMBREDI <- iconv(infraestructura$NOMBREDI, from = "latin1", to = "UTF-8", sub = "byte")
+```
+
+```{r}
+infraestructura$NOMBREDI <- gsub("�", "Ñ", infraestructura$NOMBREDI)
+```
+
+```{r}
+#install.packages("tidyr")
+library(tidyr)
+#install.packages("dplyr")
+library(dplyr)
+
+
+infraestructura <- infraestructura %>%
+  separate(NOMBREDI, into = c("UBIGEO", "CODIGO", "DISTRITO"), sep = "\\s+", extra = "merge") %>%
+  select(UBIGEO, DISTRITO, INF110_TOT_OFI_H, INF110_TOT_OFI_M, INF110_TOT_OFISV_H, INF110_TOT_OFISV_M, INF110_TOT_SOF_H, INF110_TOT_SOF_M, INF110_TOT_SOFSV_H, INF110_TOT_SOFSV_M, INF112_MOT_OFI_H, INF112_MOT_OFI_M, INF112_MOT_OFISV_H, INF112_MOT_OFISV_M, INF112_MOT_SOF_H, INF112_MOT_SOF_M, INF112_MOT_SOFSV_H, INF112_MOT_SOFSV_M)
+```
+
+```{r}
+infraestructura <- infraestructura %>%
+  filter(grepl("^1501", UBIGEO) | grepl("^0701", UBIGEO))
+```
+
+```{r}
+str(infraestructura)
+```
+
+```{r}
+library(dplyr)
+
+infraestructura <- infraestructura %>%
+  group_by(UBIGEO, DISTRITO) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+  ungroup()
+```
+
+```{r}
+str(infraestructura)
+```
+
+```{r}
+infraestructura <- infraestructura %>%
+  mutate(EFECTIVOS = rowSums(select(., starts_with("INF110")), na.rm = TRUE)) %>%
+  mutate(PATRULLAJE = rowSums(select(., starts_with("INF112")), na.rm = TRUE))
+
+```
+
+```{r}
+infraestructura <- infraestructura[, c("UBIGEO", "DISTRITO", "EFECTIVOS", "PATRULLAJE")]
+```
+
+## Capítulo 600: Seguridad (Censo Nacional de Comisarias (CENACOM) 2017 - [Instituto Nacional de Estadística e Informática - INEI])
+
+link: https://www.datosabiertos.gob.pe/dataset/censo-nacional-de-comisarias-cenacom-2017-instituto-nacional-de-estad%C3%ADstica-e-inform%C3%A1tica
+
+### Variables: "Cantidad de programas de prevención fueron atendidos (Juntas Vecinales, Clubes de menores, Policía escolar, Brigada de autoprotección escolar, Red de cooperantes para la seguridad ciudadana, Patrulla juvenil, Otros)" y "Cantidad total de operativos realizados en el año" 
+
+```{r}
+seguridad = import("Cap_600_Seguridad_2017.csv", fileEncoding = "latin1")
+```
+
+Nos quedamos solo con las variables necesarias
+
+```{r}
+seguridad <- seguridad[, c("NOMBREDI", "INF644_A", "INF644_B", "INF644_C", "INF644_D", "INF644_E", "INF644_F", "INF654_A_1", "INF654_A_2", "INF654_B_1", "INF654_B_2", "INF654_C_1", "INF654_C_2", "INF654_D_1", "INF654_D_2", "INF654_E_1", "INF654_E_2", "INF654_F_1", "INF654_F_2", "INF654_G_1", "INF654_G_2", "INF654_H_1", "INF654_H_2", "INF654_I_1", "INF654_I_2", "INF654_J_1", "INF654_J_2", "INF654_K_1", "INF654_K_2", "INF654_L_1", "INF654_L_2", "INF654_M_1", "INF654_M_2", "INF654_N_1", "INF654_N_2", "INF654_O_1", "INF654_O_2", "INF654_P_1", "INF654_P_2", "INF654_Q_1", "INF654_Q_2", "INF654_R_1", "INF654_R_2")]
+```
+
+Revisamos cómo están nuestros datos
+
+```{r}
+str(seguridad)
+```
+Intentamos arreglar los nombres de los distritos
+
+Arreglamos el problema de la "Ñ"
+```{r}
+library(dplyr)
+library(stringr)
+
+seguridad <- seguridad %>%
+  mutate(
+    NOMBREDI = iconv(NOMBREDI, from = "latin1", to = "UTF-8", sub = ""),
+    NOMBREDI = str_replace(NOMBREDI, "^.*?(\\d{2}\\s\\d{2}\\s.*)", "\\1")
+  )
+```
+
+```{r}
+seguridad$NOMBREDI <- sub(".*\\d+\\s+", "", seguridad$NOMBREDI)
+```
+
+```{r}
+library(dplyr)
+
+seguridad <- seguridad %>%
+  group_by(NOMBREDI) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+  ungroup()
+```
+
+```{r}
+seguridad <- seguridad %>%
+  mutate(PROGRAMAS = rowSums(select(., starts_with("INF644")), na.rm = TRUE)) %>%
+  mutate(OPERATIVOS = rowSums(select(., starts_with("INF654")), na.rm = TRUE))
+
+```
+
+```{r}
+seguridad <- seguridad[, c("NOMBREDI", "PROGRAMAS", "OPERATIVOS")]
+```
+
+```{r}
+seguridad <- seguridad %>%
+  rename(DISTRITO = NOMBREDI)
+```
+
+### Merge 1:
+
+Primero comparamos, para saber si coinciden nuestros distritos:
+
+```{r}
+solo_infraestructura <- anti_join(infraestructura, seguridad, by = "DISTRITO")
+
+solo_seguridad <- anti_join(seguridad, infraestructura, by = "DISTRITO")
+
+print(solo_infraestructura)
+print(solo_seguridad)
+```
+Vemos que existe un problema con un distrito, ya que en uno se encuentra como "CARMEN DE LA LEGUA REYNO" y en la otra como "CARMEN DE LA LEGUA REYNOSO". Así que debemos cambiarlo. 
+
+```{r}
+infraestructura <- infraestructura %>%
+  mutate(DISTRITO = ifelse(DISTRITO == "CARMEN DE LA LEGUA REYNO", 
+                           "CARMEN DE LA LEGUA REYNOSO", 
+                           DISTRITO))
+```
+
+Ahora sí el primer merge:
+
+```{r}
+pnp <- merge(infraestructura, seguridad, by = "DISTRITO", all = FALSE)
+```
+
+
+## Capítulo 100: Denuncia de delitos (Registro Nacional de Denuncias de Delitos y Faltas 2017)
+
+link: https://www.datosabiertos.gob.pe/dataset/registro-nacional-de-denuncias-de-delitos-y-faltas-2017-instituto-nacional-de-estad%C3%ADstica-0 
+
+### Variable: Cantidad total de denuncias
+
+```{r}
+denuncias = import("Capítulo_100_Denuncia_de_Delitos_2017.csv")
+```
+
+De nuevo, nos quedamos solo con las variables que nos interesan
+
+```{r}
+denuncias <- denuncias[, c("NOMBREDD", "NOMBREDI", "FALTAS_A_1", "FALTAS_A_2", "FALTAS_A_3", "FALTAS_A_4", "FALTAS_B", "FALTAS_B_1", "FALTAS_B_2", "FALTAS_B_3", "FALTAS_B_4", "FALTAS_B_5", "FALTAS_B_6", "FALTAS_B_7", "FALTAS_C", "FALTAS_C_1", "FALTAS_C_2", "FALTAS_D", "FALTAS_D_1", "FALTAS_E", "FALTAS_E_1")]
+```
+
+```{r}
+denuncias <- denuncias %>%
+  filter(grepl("^(1501|0701)", NOMBREDD))
+```
+
+```{r}
+denuncias <- denuncias %>%
+  mutate(
+    NOMBREDI = iconv(NOMBREDI, from = "latin1", to = "UTF-8", sub = ""),
+    NOMBREDI = str_replace_all(NOMBREDI, "BRE�A", "BREÑA")
+  )
+```
+
+```{r}
+denuncias <- denuncias %>%
+  mutate(
+    NOMBREDI = str_replace_all(NOMBREDI, "^\\d+\\s*", "")
+  )
+```
+
+```{r}
+denuncias <- denuncias %>%
+  mutate(DENUNCIAS = rowSums(select(., starts_with("FALTAS")), na.rm = TRUE))
+```
+
+```{r}
+library(dplyr)
+
+denuncias <- denuncias %>%
+  group_by(NOMBREDI) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+  ungroup()
+```
+
+```{r}
+denuncias <- denuncias %>%
+  rename(DISTRITO = NOMBREDI)
+```
+
+```{r}
+denuncias <- denuncias[, c("DISTRITO", "DENUNCIAS")]
+```
+
+### Merge 2:
+
+Comparamos nuestras bases de datos
+```{r}
+solo_pnp <- anti_join(pnp, denuncias, by = "DISTRITO")
+
+solo_denuncias <- anti_join(denuncias, pnp, by = "DISTRITO")
+
+print(solo_pnp)
+print(solo_denuncias)
+```
+Ajustamos el nombre:
+
+```{r}
+denuncias <- denuncias %>%
+  mutate(
+    DISTRITO = str_replace(DISTRITO, "MAGDALENA VIEJA", "PUEBLO LIBRE")
+  )
+```
+
+Ahora sí el merge final: 
+
+```{r}
+pnp <- merge(pnp, denuncias, by = "DISTRITO", all = FALSE)
+```
+
+```{r}
+pnp <- pnp[, c("DISTRITO", "EFECTIVOS", "PATRULLAJE", "PROGRAMAS", "OPERATIVOS", "DENUNCIAS")]
+```
+
+## Descargamos la nueva data: PNP
+
+```{r}
+write.csv(pnp, "pnp.csv", row.names = FALSE)
+```
+
+
+
+
