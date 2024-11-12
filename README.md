@@ -74,22 +74,22 @@
 ## 📖 Diccionario de datos: Cap_100_Denuncia_de_delitos 
 | *Variable*         | *Descripción*                                                                                         |
 |----------------------|---------------------------------------------------------------------------------------------------------|
-| *FALTAS_A_1*   | Departamento donde residen los beneficiarios del programa Vaso de Leche                                                     |
-| *FALTAS_A_2*  | Provincia donde residen los beneficiarios del programa Vaso de Leche                           |
-| *FALTAS_A_3*     | Geometría de la provincia (polígono)                              |
-| *FALTAS_A_4*      | Años en los que se analiza el número de beneficiarios                               |
-| *FALTAS_B*         | *Descripción*                                                                                         |
-| *FALTAS_B_1*   | Departamento donde residen los beneficiarios del programa Vaso de Leche                                                     |
-| *FALTAS_B_2*  | Provincia donde residen los beneficiarios del programa Vaso de Leche                           |
-| *FALTAS_B_3*     | Geometría de la provincia (polígono)                              |
-| *FALTAS_B_4*      | Años en los que se analiza el número de beneficiarios                               |
-| *FALTAS_B_5*         | *Descripción*                                                                                         |
-| *FALTAS_B_6*   | Departamento donde residen los beneficiarios del programa Vaso de Leche                                                     |
-| *FALTAS_B_7*  | Provincia donde residen los beneficiarios del programa Vaso de Leche                           |
-| *FALTAS_C*     | Geometría de la provincia (polígono)                              |
-| *FALTAS_C_1*      | Años en los que se analiza el número de beneficiarios                               |
-| *FALTAS_C_2*  | Provincia donde residen los beneficiarios del programa Vaso de Leche                           |
-| *FALTAS_D*     | Geometría de la provincia (polígono)                              |
-| *FALTAS_D_1*      | Años en los que se analiza el número de beneficiarios                               |
-| *FALTAS_E*         | *Descripción*                                                                                         |
-| *FALTAS_E_1*         | *Descripción*                                                                                         |
+| *FALTAS_A_1*   | Lesión dolosa y lesión culposa                                                     |
+| *FALTAS_A_2*  |  Maltrato                          |
+| *FALTAS_A_3*     | Agresión sin daño                              |
+| *FALTAS_A_4*      | Otras faltas contra la persona                              |
+| *FALTAS_B*         | Faltas contra el patrimonio                                                                               |
+| *FALTAS_B_1*   | Hurto simple y daño                                                   |
+| *FALTAS_B_2*  | Protección de señales satelitales encriptadas                           |
+| *FALTAS_B_3*     | Hurto famélico                              |
+| *FALTAS_B_4*      | Usurpación breve                             |
+| *FALTAS_B_5*         | Ingrese de animales en inmueble ajeno                                                                                        |
+| *FALTAS_B_6*   | Organización o participación en juegos prohibidos                                                     |
+| *FALTAS_B_7*  | Otras faltas contra el patrimonio                           |
+| *FALTAS_C*     | Faltas contra las buenas costumbres                               |
+| *FALTAS_C_1*      | Perturbación de la tranquilidad                    |
+| *FALTAS_C_2*  | Otras faltas                     |
+| *FALTAS_D*     | Faltas contra la seguridad pública                      |
+| *FALTAS_D_1*      | Falta contra la seguridad pública                              |
+| *FALTAS_E*         | Falta contra la tranquilidad pública                                                                                  |
+| *FALTAS_E_1*         | Falta contra la tranquilidad pública                                                                                      |
